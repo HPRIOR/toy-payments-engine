@@ -64,10 +64,37 @@ impl Client {
     }
 
     fn resolve(&mut self, tx: u32) -> () {
+        if self.locked_or_not_disputed(tx){
+            return;
+        }
+        
+        let maybe_tx_amount = self.txs.get(&tx);
+        if let Some(Tx::Deposit(tx_amount)) = maybe_tx_amount {
+            self.available += tx_amount;
+            self.held -= tx_amount;
+        }
+
+        // dispute is resolved
+        self.disputed_txs.remove(&tx);
 
     }
     fn chargeback(&mut self, tx: u32) -> () {
-        todo!()
+        if self.locked_or_not_disputed(tx) {
+            return;
+        }
+
+        let maybe_tx_amount = self.txs.get(&tx);
+        if let Some(Tx::Deposit(tx_amount)) = maybe_tx_amount {
+            self.held -= tx_amount;
+            self.total -= tx_amount;
+            self.locked = true;
+        }
+
+    }
+
+    fn locked_or_not_disputed(&self, tx: u32)-> bool{
+        let disputed = self.disputed_txs.contains(&tx);
+        self.locked || !disputed
     }
 
 }
