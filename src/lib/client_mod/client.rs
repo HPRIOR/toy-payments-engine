@@ -38,8 +38,15 @@ impl Client {
     }
 
     fn withdraw(&mut self, tx: u32, amount: f64) -> () {
-        todo!()
+        if self.locked || self.available < amount {
+            return;
+        }
+
+        self.total -= amount;
+        self.available -= amount;
+        self.txs.insert(tx, Tx::Withdraw(amount));
     }
+
     fn dispute(&mut self, tx: u32) -> () {
         todo!()
     }
