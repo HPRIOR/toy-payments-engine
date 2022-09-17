@@ -48,12 +48,26 @@ impl Client {
     }
 
     fn dispute(&mut self, tx: u32) -> () {
-        todo!()
+        // transactions cannot be disputed more than once
+        let is_disputed = self.disputed_txs.contains(&tx);
+        if self.locked || is_disputed{
+            return;
+        }
+
+        let maybe_tx_amount = self.txs.get(&tx);
+        // only deposits can be disputed (see readme)
+        if let Some(Tx::Deposit(tx_amount)) = maybe_tx_amount {
+            self.available -= tx_amount;
+            self.held += tx_amount;
+            self.disputed_txs.insert(tx);
+        }
     }
+
     fn resolve(&mut self, tx: u32) -> () {
-        todo!()
+
     }
     fn chargeback(&mut self, tx: u32) -> () {
         todo!()
     }
+
 }
