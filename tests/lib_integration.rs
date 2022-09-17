@@ -22,7 +22,33 @@ fn cannot_withdraw_over_avail() {
     assert_eq!(sut, expected)
 }
 
+#[test]
+fn irrelevant_disputes_are_ignored() {
+    let sut = process_payments(&OsString::from("tests/resources/irrelevant_disputes.csv")).unwrap();
+    let expected = create_csv(vec![["1", "80.0", "0.0", "80.0", "false"]]);
+    assert_eq!(sut, expected)
+    }
 
+#[test]
+fn disputes_correctly_modify_account() {
+    let sut = process_payments(&OsString::from("tests/resources/dispute_example.csv")).unwrap();
+    let expected = create_csv(vec![["1", "0.0", "150.0", "150.0", "false"]]);
+    assert_eq!(sut, expected)
+}
+
+#[test]
+fn resolves_correcty_modify_account() {
+    let sut = process_payments(&OsString::from("tests/resources/resolve_example.csv")).unwrap();
+    let expected = create_csv(vec![["1", "240.0", "0.0", "240.0", "false"]]);
+    assert_eq!(sut, expected)
+}
+
+#[test]
+fn irrelevant_resolves_are_ignored() {
+    let sut = process_payments(&OsString::from("tests/resources/irrelevant_resolves.csv")).unwrap();
+    let expected = create_csv(vec![["1", "40.0", "200.0", "240.0", "false"]]);
+    assert_eq!(sut, expected)
+}
 
 // Assumption: withdraws that occur after a dispute can be enacted post-hoc if they are within
 // the limits of available funds after resolution
@@ -33,7 +59,7 @@ fn withdrawals_retroactively_resolved() {
     assert_eq!(sut, expected)
 }
 
-// Assumptiom: retroactive resolutions of withdrawals only apply to those withdraws rejected
+// Assumptiom: retroactive resolution of withdrawals only apply to withdraws rejected
 // after a dispute. If a transaction occurs before a dispute and is rejected, then it is based on
 // the available funds at the time of the transaction, and only retroactively
 // dependant on the disputes occuring prior to it
@@ -46,3 +72,9 @@ fn no_retroactive_resolve_for_withdraw_prior_to_dispute() {
     let expected = create_csv(vec![["1", "100.0", "50.0", "150.0", "false"]]);
     assert_eq!(sut, expected)
 }
+
+#[test]
+fn irrelevant_chargebacks_are_ignored() {}
+
+#[test]
+fn chargeback_will_block_account() {}
