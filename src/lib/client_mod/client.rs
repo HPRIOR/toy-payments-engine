@@ -27,9 +27,12 @@ impl Client {
             locked: false,
             txs: HashMap::new(),
             disputed_txs: HashSet::new()
-
-
         }
     }
+    fn deposit(&mut self, tx: u32, amount: f64) -> (){todo!()}
+    fn withdraw(&mut self, tx: u32, amount: f64)-> (){todo!()}
+    fn dispute(&mut self, tx: u32)-> (){todo!()}
+    fn resolve(&mut self, tx: u32)-> (){todo!()}
+    fn chargeback(&mut self, tx: u32)-> (){todo!()}
 }
 
