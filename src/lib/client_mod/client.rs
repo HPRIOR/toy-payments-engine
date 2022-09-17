@@ -5,7 +5,7 @@ enum Tx {
     Deposit(f64),
 }
 
-struct Client {
+pub struct Client {
     client: u16,
     available: f64,
     held: f64,
