@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use crate::client_mod::client::Client;
-use crate::io_mod::io::{TxType, TxRow};
+use crate::io_mod::csv_io::{TxType, TxRow};
 
 pub struct CsvProcessor {
     clients: HashMap<u16, Client>,
