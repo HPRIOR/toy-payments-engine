@@ -1,17 +1,24 @@
 use std::collections::{HashMap, HashSet};
 
+#[derive(PartialEq, PartialOrd, Debug)]
 enum Tx {
     Withdraw(f64),
     Deposit(f64),
 }
 
+
+use serde::Serialize;
+
+#[derive(Debug, Serialize)]
 pub struct Client {
     client: u16,
     available: f64,
     held: f64,
     total: f64,
     locked: bool,
+    #[serde(skip)]
     txs: HashMap<u32, Tx>,
+    #[serde(skip)]
     disputed_txs: HashSet<u32>,
 }
 
