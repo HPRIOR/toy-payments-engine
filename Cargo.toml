@@ -6,3 +6,12 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+
+
+[[bin]]
+name = "toy_payments_bin"
+path = "src/main.rs"
+
+[lib]
+name = "toy_payments_lib"
+path = "src/lib/lib.rs"
