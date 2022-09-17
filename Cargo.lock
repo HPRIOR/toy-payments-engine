@@ -118,6 +118,10 @@ dependencies = [
 [[package]]
 name = "test_utils"
 version = "0.1.0"
+dependencies = [
+ "csv",
+ "serde",
+]
 
 [[package]]
 name = "toy_payments_engine"
