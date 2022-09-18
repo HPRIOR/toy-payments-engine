@@ -1,5 +1,5 @@
 #![allow(unused)]
-use serde::Serialize;
+use serde::{Serialize, Serializer};
 use std::collections::{HashMap, HashSet};
 
 #[derive(PartialEq, PartialOrd, Debug)]
@@ -14,11 +14,18 @@ struct RejectedTx {
     after_disputes: HashSet<u32>,
 }
 
+fn fixed_width<S: Serializer>(x: &f64, s: S) -> Result<S::Ok, S::Error> {
+    s.serialize_str(&format!("{:.4}", x))
+}
+
 #[derive(Debug, Serialize)]
 pub struct Client {
     client: u16,
+    #[serde(serialize_with = "fixed_width")]
     available: f64,
+    #[serde(serialize_with = "fixed_width")]
     held: f64,
+    #[serde(serialize_with = "fixed_width")]
     total: f64,
     locked: bool,
     #[serde(skip)]
