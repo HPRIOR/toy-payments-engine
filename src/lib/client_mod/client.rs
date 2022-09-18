@@ -74,6 +74,11 @@ impl Client {
         self.txs.insert(tx, Tx::Deposit(amount));
     }
 
+    // Withdrawals can only be processed if they are not locked, under the total amount
+    // in account or, if under the available amount, there are ongoing disputes on deposits.
+    //
+    // Rejected withdrawals are added to the rejected list, which are processed whenever a dispute
+    // is resolved
     pub fn withdraw(&mut self, tx: u32, amount: f64) {
         if self.locked
             || self.total < amount
