@@ -2,7 +2,6 @@ use std::{env, process};
 
 use toy_payments_lib::process_payments;
 
-
 fn main() {
     match env::args_os().nth(1) {
         None => {
@@ -23,4 +22,4 @@ fn main() {
             }
         }
     }
-}  
+}

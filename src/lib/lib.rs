@@ -1,7 +1,7 @@
-use std::{ffi::OsString, error::Error};
+use std::{error::Error, ffi::OsString};
 
 use csv_processor_mod::csv_processor::CsvProcessor;
-use io_mod::csv_io::{process_csv, output_csv};
+use io_mod::csv_io::{output_csv, process_csv};
 
 mod client_mod;
 mod csv_processor_mod;

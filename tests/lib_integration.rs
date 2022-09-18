@@ -1,6 +1,6 @@
 use std::ffi::OsString;
 
-use test_utils::{create_csv, assert_unsorted_eq};
+use test_utils::{assert_unsorted_eq, create_csv};
 use toy_payments_lib::process_payments;
 
 extern crate test_utils;
@@ -85,5 +85,4 @@ fn chargeback_will_block_account_and_reduce_funds() {
     let sut = process_payments(&OsString::from("tests/resources/upheld_chargeback.csv")).unwrap();
     let expected = create_csv(vec![["1", "-50.0", "0.0", "-50.0", "true"]]);
     assert_eq!(sut, expected)
-
 }

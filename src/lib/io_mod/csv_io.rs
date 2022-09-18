@@ -1,4 +1,4 @@
-use std::{error::Error, fs::File, ffi::OsString};
+use std::{error::Error, ffi::OsString, fs::File};
 
 use serde::Deserialize;
 
@@ -51,4 +51,4 @@ pub fn output_csv(clients: &Vec<&Client>) -> Result<String, Box<dyn Error>> {
     wtr.flush()?;
     let data = String::from_utf8(wtr.into_inner()?)?;
     Ok(data)
-}            
+}
