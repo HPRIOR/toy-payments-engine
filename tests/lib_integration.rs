@@ -1,6 +1,6 @@
 use std::ffi::OsString;
 
-use test_utils::create_csv;
+use test_utils::{create_csv, assert_unsorted_eq};
 use toy_payments_lib::process_payments;
 
 extern crate test_utils;
@@ -12,7 +12,7 @@ fn basic_example() {
         ["1", "1.5", "0.0", "1.5", "false"],
         ["2", "2.0", "0.0", "2.0", "false"],
     ]);
-    assert_eq!(sut, expected)
+    assert_unsorted_eq(&sut, &expected);
 }
 
 #[test]
