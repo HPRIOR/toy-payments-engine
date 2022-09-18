@@ -64,7 +64,7 @@ pub fn assert_unsorted_eq(s1: &String, s2: &String){
     let sut1 = split_to_dict(s1);
     let sut2 = split_to_dict(s2);
     if sut1.len() != sut2.len(){
-        panic!("csvs do not contian the same number of rows");
+        panic!("csvs do not contain the same number of rows");
     }
 
     sut1.iter().for_each(|(k, v)| {

@@ -37,7 +37,7 @@ fn disputes_correctly_modify_account() {
 }
 
 #[test]
-fn resolves_correcty_modify_account() {
+fn resolves_correctly_modify_account() {
     let sut = process_payments(&OsString::from("tests/resources/resolve_example.csv")).unwrap();
     let expected = create_csv(vec![["1", "240.0000", "0.0000", "240.0000", "false"]]);
     assert_eq!(sut, expected)
@@ -59,10 +59,10 @@ fn withdrawals_retroactively_resolved() {
     assert_eq!(sut, expected)
 }
 
-// Assumptiom: retroactive resolution of withdrawals only apply to withdraws rejected
+// Assumption: retroactive resolution of withdrawals only apply to withdraws rejected
 // after a dispute. If a transaction occurs before a dispute and is rejected, then it is based on
 // the available funds at the time of the transaction, and only retroactively
-// dependant on the disputes occuring prior to it
+// dependant on the disputes occurring prior to it
 #[test]
 fn no_retroactive_resolve_for_withdraw_prior_to_dispute() {
     let sut = process_payments(&OsString::from(

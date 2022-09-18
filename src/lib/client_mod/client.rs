@@ -83,7 +83,7 @@ impl Client {
         }
 
         if self.available < amount && !self.disputed_txs.is_empty() {
-            // keep record of all desputes occuring prior to this transaction
+            // keep record of all disputes occurring prior to this transaction
             let curr_open_disputes = self.disputed_txs.clone();
             let rejected_tx = RejectedTx {
                 amount,
@@ -129,18 +129,18 @@ impl Client {
         self.disputed_txs.remove(&tx);
     }
 
-    /// Attempts to resolve rejected tx (withdrawals), that occured after a dispute.
+    /// Attempts to resolve rejected tx (withdrawals), that occurred after a dispute.
     fn resolve_prev_rejected(&mut self, resolved_tx: u32) {
         let i_resolved_rej: Vec<usize> = self
             .rejected_txs
             .iter()
             .enumerate()
             .filter_map(|(i, r_tx)| {
-                let withdraw_occured_before_resolved_tx =
+                let withdraw_occurred_before_resolved_tx =
                     r_tx.after_disputes.contains(&resolved_tx);
                 let withdraw_within_avail = r_tx.amount <= self.available;
 
-                if withdraw_occured_before_resolved_tx && withdraw_within_avail {
+                if withdraw_occurred_before_resolved_tx && withdraw_within_avail {
                     self.available -= r_tx.amount;
                     self.total -= r_tx.amount;
                     return Some(i);
@@ -195,7 +195,7 @@ mod tests {
     }
 
     #[test]
-    fn disputed_deposite_reduces_avail() {
+    fn disputed_deposit_reduces_avail() {
         let mut client = Client::with_state(1, 10.0, 10.0, 0.0, false);
         client.deposit(1, 5.0);
         client.dispute(1);
@@ -203,7 +203,7 @@ mod tests {
     }
 
     #[test]
-    fn disputed_deposite_does_not_reduce_total() {
+    fn disputed_deposit_does_not_reduce_total() {
         let mut client = Client::with_state(1, 10.0, 10.0, 0.0, false);
         client.deposit(1, 5.0);
         client.dispute(1);
@@ -258,7 +258,7 @@ mod tests {
     }
 
     #[test]
-    fn resolve_against_undesputed_tx_is_ignored() {
+    fn resolve_against_undisputed_tx_is_ignored() {
         let mut client = Client::with_state(1, 10.0, 10.0, 0.0, false);
         client.deposit(1, 5.0);
         client.deposit(2, 5.0);
@@ -271,7 +271,7 @@ mod tests {
     }
 
     #[test]
-    fn resove_against_non_tx_is_ignored() {
+    fn resolve_against_non_tx_is_ignored() {
         let mut client = Client::with_state(1, 10.0, 10.0, 0.0, false);
         client.dispute(1);
         assert_eq!(client.available, 10.0);
@@ -323,7 +323,7 @@ mod tests {
         assert!(!client.locked);
     }
     #[test]
-    fn chargeback_ignored_if_tx_undesputed() {
+    fn chargeback_ignored_if_tx_undisputed() {
         let mut client = Client::with_state(1, 10.0, 10.0, 0.0, false);
         client.deposit(1, 10.0);
 
