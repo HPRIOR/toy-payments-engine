@@ -129,24 +129,24 @@ impl Client {
         self.disputed_txs.remove(&tx);
     }
 
-    /// Attempts to resolve rejected tx (withdrawals), that occured after a dispute. 
+    /// Attempts to resolve rejected tx (withdrawals), that occured after a dispute.
     fn resolve_prev_rejected(&mut self, resolved_tx: u32) {
         let i_resolved_rej: Vec<usize> = self
             .rejected_txs
             .iter()
             .enumerate()
-            .map(|(i, r_tx)| {
-                let withdraw_occured_before_resolved_tx = r_tx.after_disputes.contains(&resolved_tx);
+            .filter_map(|(i, r_tx)| {
+                let withdraw_occured_before_resolved_tx =
+                    r_tx.after_disputes.contains(&resolved_tx);
                 let withdraw_within_avail = r_tx.amount <= self.available;
 
                 if withdraw_occured_before_resolved_tx && withdraw_within_avail {
                     self.available -= r_tx.amount;
                     self.total -= r_tx.amount;
-                    return Some(i); 
+                    return Some(i);
                 };
                 None
             })
-            .filter_map(|x| x)
             .collect();
 
         // remove txs which have now been accepted
