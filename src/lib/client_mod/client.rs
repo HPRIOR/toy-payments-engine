@@ -77,12 +77,12 @@ impl Client {
     pub fn withdraw(&mut self, tx: u32, amount: f64) {
         if self.locked
             || self.total < amount
-            || (self.available < amount && self.disputed_txs.len() == 0)
+            || (self.available < amount && self.disputed_txs.is_empty())
         {
             return;
         }
 
-        if self.available < amount && self.disputed_txs.len() > 0 {
+        if self.available < amount && !self.disputed_txs.is_empty() {
             // keep record of all desputes occuring prior to this transaction
             let curr_open_disputes = self.disputed_txs.clone();
             let rejected_tx = RejectedTx {
