@@ -27,7 +27,7 @@ fn irrelevant_disputes_are_ignored() {
     let sut = process_payments(&OsString::from("tests/resources/irrelevant_disputes.csv")).unwrap();
     let expected = create_csv(vec![["1", "80.0", "0.0", "80.0", "false"]]);
     assert_eq!(sut, expected)
-    }
+}
 
 #[test]
 fn disputes_correctly_modify_account() {
@@ -74,7 +74,16 @@ fn no_retroactive_resolve_for_withdraw_prior_to_dispute() {
 }
 
 #[test]
-fn irrelevant_chargebacks_are_ignored() {}
+fn irrelevant_chargebacks_are_ignored() {
+    let sut = process_payments(&OsString::from("tests/resources/false_chargebacks.csv")).unwrap();
+    let expected = create_csv(vec![["1", "50.0", "0.0", "50.0", "false"]]);
+    assert_eq!(sut, expected)
+}
 
 #[test]
-fn chargeback_will_block_account() {}
+fn chargeback_will_block_account_and_reduce_funds() {
+    let sut = process_payments(&OsString::from("tests/resources/upheld_chargeback.csv")).unwrap();
+    let expected = create_csv(vec![["1", "-50.0", "0.0", "-50.0", "true"]]);
+    assert_eq!(sut, expected)
+
+}
