@@ -37,6 +37,7 @@ impl CsvProcessor {
         match maybe_client {
             Some(client) => client_cmd(client),
             None => match row.tx_type {
+                // new clients can only be created by withdraws and desposits
                 TxType::Deposit | TxType::Withdrawal => {
                     let mut c = Client::new(row.client);
                     client_cmd(&mut c);
