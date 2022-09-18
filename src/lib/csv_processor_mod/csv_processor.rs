@@ -36,15 +36,14 @@ impl CsvProcessor {
         let maybe_client = self.clients.get_mut(&row.client);
         match maybe_client {
             Some(client) => client_cmd(client),
-            None => match row.tx_type {
+            None => {
                 // new clients can only be created by withdraws and deposits
-                TxType::Deposit | TxType::Withdrawal => {
+                if let TxType::Deposit | TxType::Withdrawal = row.tx_type {
                     let mut c = Client::new(row.client);
                     client_cmd(&mut c);
                     self.clients.insert(row.client, c);
                 }
-                _ => {}
-            },
+            }
         }
     }
 
