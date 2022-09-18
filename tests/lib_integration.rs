@@ -23,8 +23,8 @@ fn cannot_withdraw_over_avail() {
 }
 
 #[test]
-fn irrelevant_disputes_are_ignored() {
-    let sut = process_payments(&OsString::from("tests/resources/irrelevant_disputes.csv")).unwrap();
+fn false_disputes_are_ignored() {
+    let sut = process_payments(&OsString::from("tests/resources/false_disputes.csv")).unwrap();
     let expected = create_csv(vec![["1", "80.0", "0.0", "80.0", "false"]]);
     assert_eq!(sut, expected)
 }
@@ -44,8 +44,8 @@ fn resolves_correcty_modify_account() {
 }
 
 #[test]
-fn irrelevant_resolves_are_ignored() {
-    let sut = process_payments(&OsString::from("tests/resources/irrelevant_resolves.csv")).unwrap();
+fn false_resolves_are_ignored() {
+    let sut = process_payments(&OsString::from("tests/resources/false_resolves.csv")).unwrap();
     let expected = create_csv(vec![["1", "40.0", "200.0", "240.0", "false"]]);
     assert_eq!(sut, expected)
 }
@@ -74,7 +74,7 @@ fn no_retroactive_resolve_for_withdraw_prior_to_dispute() {
 }
 
 #[test]
-fn irrelevant_chargebacks_are_ignored() {
+fn false_chargebacks_are_ignored() {
     let sut = process_payments(&OsString::from("tests/resources/false_chargebacks.csv")).unwrap();
     let expected = create_csv(vec![["1", "50.0", "0.0", "50.0", "false"]]);
     assert_eq!(sut, expected)
