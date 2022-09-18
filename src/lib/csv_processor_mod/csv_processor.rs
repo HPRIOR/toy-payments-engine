@@ -14,7 +14,7 @@ impl CsvProcessor {
         }
     }
 
-    pub fn process_rows(&mut self, rows: &Vec<TxRow>) {
+    pub fn process_rows(&mut self, rows: &[TxRow]) {
         rows.iter().for_each(|row| self.process_row(row))
     }
 
