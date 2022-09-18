@@ -69,7 +69,7 @@ fn no_retroactive_resolve_for_withdraw_prior_to_dispute() {
         "tests/resources/retroactive_resolve_with_rejected_withdrawal.csv",
     ))
     .unwrap();
-    let expected = create_csv(vec![["1", "100.0", "50.0", "150.0", "false"]]);
+    let expected = create_csv(vec![["1", "200.0", "50.0", "250.0", "false"]]);
     assert_eq!(sut, expected)
 }
 

@@ -8,8 +8,11 @@ enum Tx {
     Deposit(f64),
 }
 
-
-use serde::Serialize;
+#[derive(Debug)]
+struct RejectedTx {
+    amount: f64,
+    after_disputes: HashSet<u32>,
+}
 
 #[derive(Debug, Serialize)]
 pub struct Client {
@@ -22,6 +25,8 @@ pub struct Client {
     txs: HashMap<u32, Tx>,
     #[serde(skip)]
     disputed_txs: HashSet<u32>,
+    #[serde(skip)]
+    rejected_txs: Vec<RejectedTx>,
 }
 
 impl Client {
@@ -34,8 +39,10 @@ impl Client {
             locked: false,
             txs: HashMap::new(),
             disputed_txs: HashSet::new(),
+            rejected_txs: Vec::new(),
         }
     }
+
     #[allow(unused)]
     fn with_state(id: u16, total: f64, available: f64, held: f64, locked: bool) -> Self {
         Self {
@@ -46,8 +53,10 @@ impl Client {
             locked,
             txs: HashMap::new(),
             disputed_txs: HashSet::new(),
+            rejected_txs: Vec::new(),
         }
     }
+
     pub fn deposit(&mut self, tx: u32, amount: f64) -> () {
         if self.locked {
             return;
@@ -59,7 +68,21 @@ impl Client {
     }
 
     pub fn withdraw(&mut self, tx: u32, amount: f64) -> () {
-        if self.locked || self.available < amount {
+        if self.locked
+            || self.total < amount
+            || (self.available < amount && self.disputed_txs.len() == 0)
+        {
+            return;
+        }
+
+        if self.available < amount && self.disputed_txs.len() > 0 {
+            // keep record of all desputes occuring prior to this transaction
+            let curr_open_disputes = self.disputed_txs.clone();
+            let rejected_tx = RejectedTx {
+                amount,
+                after_disputes: curr_open_disputes,
+            };
+            self.rejected_txs.push(rejected_tx);
             return;
         }
 
@@ -88,16 +111,44 @@ impl Client {
         if self.locked_or_not_disputed(tx) {
             return;
         }
-
         let maybe_tx_amount = self.txs.get(&tx);
         if let Some(Tx::Deposit(tx_amount)) = maybe_tx_amount {
             self.available += tx_amount;
             self.held -= tx_amount;
+            self.resolve_prev_rejected(tx);
         }
 
         // dispute is resolved
         self.disputed_txs.remove(&tx);
     }
+
+    /// Attempts to resolve rejected tx (withdrawals), that occured after a dispute. 
+    fn resolve_prev_rejected(&mut self, resolved_tx: u32) {
+        let i_resolved_rej: Vec<usize> = self
+            .rejected_txs
+            .iter()
+            .enumerate()
+            .map(|(i, r_tx)| {
+                let withdraw_occured_before_resolved_tx = r_tx.after_disputes.contains(&resolved_tx);
+                let withdraw_within_avail = r_tx.amount <= self.available;
+
+                if withdraw_occured_before_resolved_tx && withdraw_within_avail {
+                    self.available -= r_tx.amount;
+                    self.total -= r_tx.amount;
+                    return Some(i); 
+                };
+                None
+            })
+            .filter_map(|x| x)
+            .collect();
+
+        // remove txs which have now been accepted
+        // order is reversed to preserve index of subsequent entries
+        i_resolved_rej.iter().rev().for_each(|i| {
+            self.rejected_txs.remove(*i);
+        });
+    }
+
     pub fn chargeback(&mut self, tx: u32) -> () {
         if self.locked_or_not_disputed(tx) {
             return;
