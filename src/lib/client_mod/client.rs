@@ -64,7 +64,7 @@ impl Client {
         }
     }
 
-    pub fn deposit(&mut self, tx: u32, amount: f64) -> () {
+    pub fn deposit(&mut self, tx: u32, amount: f64) {
         if self.locked {
             return;
         }
@@ -74,7 +74,7 @@ impl Client {
         self.txs.insert(tx, Tx::Deposit(amount));
     }
 
-    pub fn withdraw(&mut self, tx: u32, amount: f64) -> () {
+    pub fn withdraw(&mut self, tx: u32, amount: f64) {
         if self.locked
             || self.total < amount
             || (self.available < amount && self.disputed_txs.len() == 0)
@@ -98,7 +98,7 @@ impl Client {
         self.txs.insert(tx, Tx::Withdraw(amount));
     }
 
-    pub fn dispute(&mut self, tx: u32) -> () {
+    pub fn dispute(&mut self, tx: u32) {
         // transactions cannot be disputed more than once
         let is_disputed = self.disputed_txs.contains(&tx);
         if self.locked || is_disputed {
@@ -114,7 +114,7 @@ impl Client {
         }
     }
 
-    pub fn resolve(&mut self, tx: u32) -> () {
+    pub fn resolve(&mut self, tx: u32) {
         if self.locked_or_not_disputed(tx) {
             return;
         }
@@ -156,7 +156,7 @@ impl Client {
         });
     }
 
-    pub fn chargeback(&mut self, tx: u32) -> () {
+    pub fn chargeback(&mut self, tx: u32) {
         if self.locked_or_not_disputed(tx) {
             return;
         }

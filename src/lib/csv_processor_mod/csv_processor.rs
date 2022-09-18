@@ -32,7 +32,7 @@ impl CsvProcessor {
     }
 
     /// Handles the creation of new clients and delegates client method call to function pointer
-    fn client_call(&mut self, client_cmd: &dyn Fn(&mut Client) -> (), row: &TxRow) {
+    fn client_call(&mut self, client_cmd: &dyn Fn(&mut Client), row: &TxRow) {
         let maybe_client = self.clients.get_mut(&row.client);
         match maybe_client {
             Some(client) => client_cmd(client),
